@@ -7,7 +7,7 @@ from .filters import CashFlowFilter
 
 class CashFlowListView(ListView):
     model = CashFlow
-    template_name = 'core/cashflow_list.html'
+    template_name = 'core/cashflow_home.html'
     context_object_name = 'cashflows'
     paginate_by = 20
 

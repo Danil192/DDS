@@ -60,11 +60,20 @@ class CashFlow(models.Model):
         ordering = ['-date', '-created_at']
 
     def clean(self):
-        if self.category and self.category.cash_type != self.cash_type:
-            raise ValidationError({'category': 'Выбранная категория не относится к указанному типу.'})
+        if self.category_id and self.cash_type_id:
+            from .models import Category
+            try:
+                category = Category.objects.get(id=self.category_id)
+                if category.cash_type_id != self.cash_type_id:
+                    raise ValidationError({'category': 'Выбранная категория не относится к указанному типу'})
+            except Category.DoesNotExist:
+                pass
         
-        if self.subcategory and self.subcategory.category != self.category:
-            raise ValidationError({'subcategory': 'Выбранная подкатегория не относится к указанной категории'})
-
-    def __str__(self):
-        return f"{self.date} | {self.cash_type.name} | {self.amount} руб."
+        if self.subcategory_id and self.category_id:
+            from .models import Subcategory
+            try:
+                subcategory = Subcategory.objects.get(id=self.subcategory_id)
+                if subcategory.category_id != self.category_id:
+                    raise ValidationError({'subcategory': 'Выбранная подкатегория не относится к указанной категории'})
+            except Subcategory.DoesNotExist:
+                pass

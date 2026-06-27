@@ -17,9 +17,11 @@ class CashFlowForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.all()
+        self.fields['subcategory'].queryset = Subcategory.objects.all()
+        
         if self.instance and self.instance.pk:
-            self.fields['category'].queryset = Category.objects.filter(cash_type=self.instance.cash_type)
-            self.fields['subcategory'].queryset = Subcategory.objects.filter(category=self.instance.category)
-        else:
-            self.fields['category'].queryset = Category.objects.none()
-            self.fields['subcategory'].queryset = Subcategory.objects.none()
+            if self.instance.cash_type:
+                self.fields['category'].queryset = Category.objects.filter(cash_type=self.instance.cash_type)
+            if self.instance.category:
+                self.fields['subcategory'].queryset = Subcategory.objects.filter(category=self.instance.category)
